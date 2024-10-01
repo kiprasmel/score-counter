@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Counter</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+
+        const AlertDialog = ({ children, title, description, onConfirm, confirmText = "Confirm" }) => {
+            const [isOpen, setIsOpen] = useState(false);
+
+            return (
+                <>
+                    {React.cloneElement(children, { onClick: () => setIsOpen(true) })}
+                    {isOpen && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-lg max-w-sm w-full">
+                                <h3 className="text-lg font-medium mb-2">{title}</h3>
+                                <p className="text-gray-500 mb-4">{description}</p>
+                                <div className="flex justify-end space-x-2">
+                                    <button
+                                        className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        onClick={() => {
+                                            onConfirm();
+                                            setIsOpen(false);
+                                        }}
+                                    >
+                                        {confirmText}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
+        const VolleyballScoreCounter = () => {
+            const [teamAScore, setTeamAScore] = useState(0);
+            const [teamBScore, setTeamBScore] = useState(0);
+            const [teamASets, setTeamASets] = useState(0);
+            const [teamBSets, setTeamBSets] = useState(0);
+
+            const updateScore = (team, increment) => {
+                if (team === 'A') {
+                    setTeamAScore(prev => Math.max(0, prev + increment));
+                } else {
+                    setTeamBScore(prev => Math.max(0, prev + increment));
+                }
+            };
+
+            const updateSets = (team, increment) => {
+                if (team === 'A') {
+                    setTeamASets(prev => Math.max(0, prev + increment));
+                } else {
+                    setTeamBSets(prev => Math.max(0, prev + increment));
+                }
+            };
+
+            const resetScores = () => {
+                setTeamAScore(0);
+                setTeamBScore(0);
+            };
+
+            const resetSets = () => {
+                setTeamASets(0);
+                setTeamBSets(0);
+            };
+
+            const resetAll = () => {
+                resetScores();
+                resetSets();
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
+                    <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-md">
+                        <h1 className="text-2xl font-bold text-center mb-4">Score</h1>
+                        <div className="flex justify-between items-center mb-4">
+                            <div className="text-center w-[45%] bg-gray-200 p-4 rounded">
+                                <h2 className="text-xl font-semibold mb-2">Team A</h2>
+                                <div className="text-6xl font-bold">{teamAScore}</div>
+                            </div>
+                            <div className="text-center w-[45%] bg-gray-200 p-4 rounded">
+                                <h2 className="text-xl font-semibold mb-2">Team B</h2>
+                                <div className="text-6xl font-bold">{teamBScore}</div>
+                            </div>
+                        </div>
+                        <div className="flex justify-center space-x-4 mb-4">
+                            <div className="text-center bg-blue-200 px-4 py-2 rounded">
+                                <div className="text-2xl font-bold">{teamASets}</div>
+                                <div className="text-sm">Sets A</div>
+                            </div>
+                            <div className="text-center bg-blue-200 px-4 py-2 rounded">
+                                <div className="text-2xl font-bold">{teamBSets}</div>
+                                <div className="text-sm">Sets B</div>
+                            </div>
+                        </div>
+                        <div className="flex justify-between mt-6">
+                            <div className="space-y-2">
+                                <div>
+                                    <button
+                                        onClick={() => updateScore('A', 1)}
+                                        className="bg-green-500 text-white px-4 py-2 rounded mr-2 text-lg"
+                                        title="+1 score"
+                                    >
+                                        +1
+                                    </button>
+                                    <button
+                                        onClick={() => updateScore('A', -1)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded text-lg"
+                                        title="-1 score"
+                                    >
+                                        -1
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() => updateSets('A', 1)}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                                        title="+1 set"
+                                    >
+                                        +S
+                                    </button>
+                                    <button
+                                        onClick={() => updateSets('A', -1)}
+                                        className="bg-yellow-500 text-white px-4 py-2 rounded"
+                                        title="-1 set"
+                                    >
+                                        -S
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <div>
+                                    <button
+                                        onClick={() => updateScore('B', 1)}
+                                        className="bg-green-500 text-white px-4 py-2 rounded mr-2 text-lg"
+                                        title="+1 score"
+                                    >
+                                        +1
+                                    </button>
+                                    <button
+                                        onClick={() => updateScore('B', -1)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded text-lg"
+                                        title="-1 score"
+                                    >
+                                        -1
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() => updateSets('B', 1)}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                                        title="+1 set"
+                                    >
+                                        +S
+                                    </button>
+                                    <button
+                                        onClick={() => updateSets('B', -1)}
+                                        className="bg-yellow-500 text-white px-4 py-2 rounded"
+                                        title="-1 set"
+                                    >
+                                        -S
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-8 text-center flex justify-center space-x-2">
+                            <AlertDialog
+                                title="Reset Scores?"
+                                description="This will reset the current scores to 0. Set counts will remain unchanged."
+                                onConfirm={resetScores}
+                            >
+                                <button className="bg-yellow-500 text-white px-3 py-2 rounded text-sm">
+                                    Reset Scores
+                                </button>
+                            </AlertDialog>
+                            <AlertDialog
+                                title="Reset Sets?"
+                                description="This will reset the set counts to 0. Scores will remain unchanged."
+                                onConfirm={resetSets}
+                            >
+                                <button className="bg-orange-500 text-white px-3 py-2 rounded text-sm">
+                                    Reset Sets
+                                </button>
+                            </AlertDialog>
+                            <AlertDialog
+                                title="Reset All?"
+                                description="This will reset both scores and set counts to 0."
+                                onConfirm={resetAll}
+                            >
+                                <button className="bg-red-500 text-white px-3 py-2 rounded text-sm">
+                                    Reset All
+                                </button>
+                            </AlertDialog>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<VolleyballScoreCounter />);
+    </script>
+</body>
+</html>
